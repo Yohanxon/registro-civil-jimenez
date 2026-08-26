@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Civil Municipal de Jiménez</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>REGISTRO CIVIL MUNICIPAL DE JIMÉNEZ</h1>
+                <p class="slogan">✦ Tu Registro es tu Alcance ✦</p>
+            </div>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="#servicios">Trámites</a>
+                <a href="#requisitos">Requisitos</a>
+                <a href="citas.html">Citas</a>
+                <a href="admin_login.php" class="btn-admin">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <h2>Bienvenidos al Registro Civil</h2>
+            <p>El Registro a tu Alcance, mejores Servicios, tu seguridad garantizada.</p>
+            <a href="citas.html" class="btn-principal">
+                <i class="fas fa-calendar-check"></i> Acceder al sistema
+            </a>
+        </div>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section id="servicios" class="servicios">
+        <div class="container">
+            <h2>Servicios Que Te Ofrecemos</h2>
+            <p class="subtitulo">¿Qué buscás hoy?</p>
+            
+            <div class="grid-servicios">
+                <div class="servicio-card">
+                    <span class="icono">👤</span>
+                    <h3>Atención al Ciudadano</h3>
+                    <p>Te orientamos de forma fácil y rápida</p>
+                    <a href="citas.html" class="btn-servicio">Iniciar Gestión</a>
+                </div>
+                
+                <div class="servicio-card">
+                    <span class="icono">📱</span>
+                    <h3>Trámites en Línea</h3>
+                    <p>Realiza tu trámite desde donde estás</p>
+                    <a href="citas.html" class="btn-servicio">Iniciar Trámite</a>
+                </div>
+                
+                <div class="servicio-card">
+                    <span class="icono">📅</span>
+                    <h3>Agenda tu Cita</h3>
+                    <p>Te agendamos de acuerdo a tu solicitud</p>
+                    <a href="citas.html" class="btn-servicio">Solicitar Cita</a>
+                </div>
+                
+                <div class="servicio-card">
+                    <span class="icono">📋</span>
+                    <h3>Requisitos</h3>
+                    <p>Tu identificación y documento probatorio</p>
+                    <a href="#requisitos" class="btn-servicio">Ver Requisitos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REQUISITOS -->
+    <section id="requisitos" class="requisitos">
+        <div class="container">
+            <h2>Requisitos Generales</h2>
+            <div class="grid-requisitos" id="requisitos-lista">
+                <!-- Cargado desde la base de datos -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Contacto -->
+                <div>
+                    <h3><i class="fas fa-address-card"></i> Dirección</h3>
+                    <div class="contacto-item">
+                        <span class="icono">📍</span>
+                        <p id="footer-direccion">Avenida Baudilio Lara, Quíbor</p>
+                    </div>
+                    
+                    <h3 style="margin-top: 20px;"><i class="fas fa-phone"></i> Teléfono</h3>
+                    <div class="contacto-item">
+                        <span class="icono">📞</span>
+                        <p id="footer-telefono">0412 5453900</p>
+                    </div>
+                    
+                    <h3 style="margin-top: 20px;"><i class="fas fa-envelope"></i> Email</h3>
+                    <div class="contacto-item">
+                        <span class="icono">✉️</span>
+                        <p id="footer-email">registrocivilmunicipal@gmail.com</p>
+                    </div>
+                </div>
+
+                <!-- Horarios -->
+                <div>
+                    <h3><i class="fas fa-clock"></i> Horarios</h3>
+                    <div class="horarios">
+                        <p><span class="horario-dia">📅 Lunes a Viernes</span></p>
+                        <p><span class="horario-hora">🕗 8:00 am - 12:00 pm</span></p>
+                        <p><span class="horario-hora">🕑 2:00 pm - 4:00 pm</span></p>
+                        <p style="margin-top: 10px; font-size: 0.85rem; color: #ffd700;">
+                            <i class="fas fa-info-circle"></i> Atención presencial y telefónica
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Redes Sociales -->
+                <div>
+                    <h3><i class="fas fa-share-alt"></i> Síguenos en Redes</h3>
+                    <div class="social-links">
+                        <a href="#" target="_blank">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                        <a href="#" target="_blank">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                        <a href="#" target="_blank">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                    </div>
+                    <p style="margin-top: 15px; color: #666; font-size: 0.85rem;">
+                        <i class="fas fa-info-circle"></i> Síguenos para estar al día
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Registro Civil Municipal de Jiménez. Todos los derechos reservados.</p>
+                <p style="font-size: 0.8rem; color: #444; margin-top: 5px;">
+                    <i class="fas fa-heart" style="color: #ffd700;"></i> 
+                    Tu Registro es tu Alcance
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

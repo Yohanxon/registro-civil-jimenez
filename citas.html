@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Cita - Registro Civil</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>REGISTRO CIVIL MUNICIPAL DE JIMÉNEZ</h1>
+                <p class="slogan">Tu Registro es tu Alcance</p>
+            </div>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="admin_login.php" class="btn-admin">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" style="padding: 30px 0;">
+        <div class="container">
+            <h2>Solicitar Cita</h2>
+            <p>Completa el formulario y te contactaremos para confirmar</p>
+        </div>
+    </section>
+
+    <section style="padding: 40px 0;">
+        <div class="container">
+            <div class="form-cita">
+                <div id="mensaje"></div>
+                <form id="formCita">
+                    <div class="form-group">
+                        <label>Nombre Completo *</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input type="tel" id="telefono" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Acta *</label>
+                        <select id="tipo_acta" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="Nacimiento">Nacimiento</option>
+                            <option value="Matrimonio">Matrimonio</option>
+                            <option value="Defunción">Defunción</option>
+                            <option value="Divorcio">Divorcio</option>
+                            <option value="Constancia">Constancia de Soltería</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fecha Preferida *</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hora Preferida *</label>
+                        <input type="time" id="hora" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notas Adicionales</label>
+                        <textarea id="notas" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Solicitar Cita</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Dirección</h3>
+                    <p>Avenida Baudilio Lara, Quibor</p>
+                </div>
+                <div>
+                    <h3>Horarios</h3>
+                    <p>Lunes a Viernes</p>
+                    <p>8:00 am - 12:00 pm / 2:00 pm - 4:00 pm</p>
+                </div>
+                <div>
+                    <h3>Contacto</h3>
+                    <p>0412 5453900</p>
+                    <p>registrocivilmunicipal@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/citas.js"></script>
+</body>
+</html>

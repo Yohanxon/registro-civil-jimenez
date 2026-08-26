@@ -1,0 +1,37 @@
+[build]
+  command = "npm install"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/admin_login"
+  to = "/admin_login.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin_dashboard"
+  to = "/admin_dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin_citas"
+  to = "/admin_citas.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin_requisitos"
+  to = "/admin_requisitos.html"
+  status = 200
+
+# Redirigir todo a index.html (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

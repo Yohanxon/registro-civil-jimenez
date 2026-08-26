@@ -1,0 +1,9 @@
+{
+  "name": "registro-civil-jimenez",
+  "version": "1.0.0",
+  "description": "Registro Civil Municipal de Jiménez",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3"
+  }
+}

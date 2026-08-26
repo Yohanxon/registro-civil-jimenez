@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Requisitos - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>REGISTRO CIVIL MUNICIPAL DE JIMÉNEZ</h1>
+                <p class="slogan">✦ Panel de Administración ✦</p>
+            </div>
+            <nav>
+                <a href="admin_dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="#" onclick="logout()" style="background: #dc3545; padding: 8px 20px; border-radius: 25px;">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="admin-panel">
+        <div class="container">
+            <div class="admin-header">
+                <h2>
+                    <i class="fas fa-list" style="color: #ffd700;"></i> 
+                    Gestión de Requisitos
+                </h2>
+                <button class="btn-add" onclick="mostrarFormulario()">
+                    <i class="fas fa-plus"></i> Agregar Requisito
+                </button>
+            </div>
+
+            <div id="mensajeAccion"></div>
+
+            <!-- Formulario para agregar -->
+            <div id="formRequisito" style="display: none; background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3 style="color: #0a1628; margin-bottom: 15px;">Nuevo Requisito</h3>
+                <form id="formAgregarRequisito">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="reqTitulo" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Icono (emoji)</label>
+                            <input type="text" id="reqIcono" placeholder="📄">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="reqDescripcion" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" style="width: auto;">Guardar Requisito</button>
+                    <button type="button" onclick="ocultarFormulario()" style="padding: 12px 20px; margin-left: 10px;">Cancelar</button>
+                </form>
+            </div>
+
+            <!-- Lista de requisitos -->
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 15px rgba(0,0,0,0.06);">
+                <div id="listaRequisitos">
+                    <p style="text-align: center; color: #999; padding: 30px;">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando requisitos...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        if (!localStorage.getItem('admin_logueado')) {
+            window.location.href = 'admin_login.html';
+        }
+
+        cargarRequisitos();
+
+        // Formulario para agregar
+        document.getElementById('formAgregarRequisito').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const datos = {
+                accion: 'agregar',
+                titulo: document.getElementById('reqTitulo').value,
+                descripcion: document.getElementById('reqDescripcion').value,
+                icono: document.getElementById('reqIcono').value || '📄'
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/admin-requisitos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+                const data = await response.json();
+                
+                const mensaje = document.getElementById('mensajeAccion');
+                if (data.exito) {
+                    mensaje.innerHTML = `<div class="alert-success">✅ ${data.mensaje}</div>`;
+                    document.getElementById('formAgregarRequisito').reset();
+                    ocultarFormulario();
+                    cargarRequisitos();
+                    setTimeout(() => { mensaje.innerHTML = ''; }, 3000);
+                } else {
+                    mensaje.innerHTML = `<div class="alert-error">❌ ${data.mensaje}</div>`;
+                }
+            } catch (error) {
+                alert('Error al guardar');
+            }
+        });
+
+        async function cargarRequisitos() {
+            try {
+                const response = await fetch('/.netlify/functions/obtener-requisitos');
+                const requisitos = await response.json();
+                const contenedor = document.getElementById('listaRequisitos');
+                
+                if (requisitos.length === 0) {
+                    contenedor.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                            <p>No hay requisitos registrados</p>
+                        </div>
+                    `;
+                } else {
+                    contenedor.innerHTML = `
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icono</th>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${requisitos.map(req => `
+                                    <tr>
+                                        <td style="font-size: 2rem;">${req.icono || '📄'}</td>
+                                        <td>${escapeHTML(req.titulo)}</td>
+                                        <td>${escapeHTML(req.descripcion)}</td>
+                                        <td>
+                                            <button onclick="eliminarRequisito(${req.id})" class="btn-delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('listaRequisitos').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                        <p>Error al cargar los requisitos</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function eliminarRequisito(id) {
+            if (!confirm('¿Eliminar este requisito?')) return;
+            
+            try {
+                const response = await fetch('/.netlify/functions/admin-requisitos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accion: 'eliminar', id })
+                });
+                const data = await response.json();
+                
+                if (data.exito) {
+                    const mensaje = document.getElementById('mensajeAccion');
+                    mensaje.innerHTML = `<div class="alert-success">✅ ${data.mensaje}</div>`;
+                    cargarRequisitos();
+                    setTimeout(() => { mensaje.innerHTML = ''; }, 3000);
+                } else {
+                    alert('Error: ' + data.mensaje);
+                }
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        function mostrarFormulario() {
+            document.getElementById('formRequisito').style.display = 'block';
+            document.getElementById('formRequisito').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function ocultarFormulario() {
+            document.getElementById('formRequisito').style.display = 'none';
+        }
+
+        function escapeHTML(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                localStorage.clear();
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Citas - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>REGISTRO CIVIL MUNICIPAL DE JIMÉNEZ</h1>
+                <p class="slogan">✦ Panel de Administración ✦</p>
+            </div>
+            <nav>
+                <a href="admin_dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="#" onclick="logout()" style="background: #dc3545; padding: 8px 20px; border-radius: 25px;">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="admin-panel">
+        <div class="container">
+            <div class="admin-header">
+                <h2>
+                    <i class="fas fa-calendar-check" style="color: #ffd700;"></i> 
+                    Gestión de Citas
+                </h2>
+                <div id="mensajeAccion"></div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 15px rgba(0,0,0,0.06); overflow-x: auto;">
+                <div id="tablaCitas">
+                    <p style="text-align: center; color: #999; padding: 30px;">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando citas...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        if (!localStorage.getItem('admin_logueado')) {
+            window.location.href = 'admin_login.html';
+        }
+
+        cargarCitas();
+
+        async function cargarCitas() {
+            try {
+                const response = await fetch('/.netlify/functions/obtener-citas');
+                const citas = await response.json();
+                const contenedor = document.getElementById('tablaCitas');
+                
+                if (citas.length === 0) {
+                    contenedor.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #999;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                            <p>No hay citas registradas aún</p>
+                        </div>
+                    `;
+                } else {
+                    contenedor.innerHTML = `
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Tipo Acta</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${citas.map(cita => `
+                                    <tr>
+                                        <td><strong>#${cita.id}</strong></td>
+                                        <td>${escapeHTML(cita.nombre_completo)}</td>
+                                        <td>${escapeHTML(cita.email)}</td>
+                                        <td>${escapeHTML(cita.telefono)}</td>
+                                        <td>${escapeHTML(cita.tipo_acta)}</td>
+                                        <td>${new Date(cita.fecha).toLocaleDateString('es-ES')}</td>
+                                        <td>${cita.hora.substring(0, 5)}</td>
+                                        <td>
+                                            <select onchange="cambiarEstado(${cita.id}, this.value)" 
+                                                style="padding: 5px 10px; border-radius: 5px; border: 2px solid #e0e0e0;">
+                                                <option value="pendiente" ${cita.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                                <option value="confirmada" ${cita.estado === 'confirmada' ? 'selected' : ''}>Confirmada</option>
+                                                <option value="cancelada" ${cita.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button onclick="eliminarCita(${cita.id})" class="btn-delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('tablaCitas').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                        <p>Error al cargar las citas</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function cambiarEstado(id, estado) {
+            try {
+                const response = await fetch('/.netlify/functions/actualizar-cita', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, estado })
+                });
+                const data = await response.json();
+                
+                const mensaje = document.getElementById('mensajeAccion');
+                if (data.exito) {
+                    mensaje.innerHTML = `<div class="alert-success">✅ ${data.mensaje}</div>`;
+                    setTimeout(() => { mensaje.innerHTML = ''; }, 3000);
+                    cargarCitas();
+                } else {
+                    mensaje.innerHTML = `<div class="alert-error">❌ ${data.mensaje}</div>`;
+                }
+            } catch (error) {
+                alert('Error al cambiar estado');
+            }
+        }
+
+        async function eliminarCita(id) {
+            if (!confirm('¿Estás seguro de eliminar esta cita?')) return;
+            
+            try {
+                const response = await fetch('/.netlify/functions/eliminar-cita', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await response.json();
+                
+                if (data.exito) {
+                    const mensaje = document.getElementById('mensajeAccion');
+                    mensaje.innerHTML = `<div class="alert-success">✅ ${data.mensaje}</div>`;
+                    setTimeout(() => { mensaje.innerHTML = ''; }, 3000);
+                    cargarCitas();
+                } else {
+                    alert('Error al eliminar: ' + data.mensaje);
+                }
+            } catch (error) {
+                alert('Error al eliminar');
+            }
+        }
+
+        function escapeHTML(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                localStorage.clear();
+                window.location.href = 'admin_login.html';
+            }
+        }
+    </script>
+</body>
+</html>

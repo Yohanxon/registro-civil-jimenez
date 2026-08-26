@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Registro Civil</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>REGISTRO CIVIL MUNICIPAL DE JIMÉNEZ</h1>
+                <p class="slogan">✦ Panel de Administración ✦</p>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="max-width: 400px; margin: 60px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+            <div style="text-align: center; font-size: 3rem; margin-bottom: 20px;">🔐</div>
+            <h2 style="text-align: center; color: #0a1628;">Acceso Administrador</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Ingresa tus credenciales</p>
+            
+            <div id="mensaje-login"></div>
+            
+            <form id="formLogin">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@registrocivil.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="admin123" required>
+                </div>
+                <button type="submit" class="btn-submit" style="background: #ffd700; color: #0a1628; font-weight: 700;">
+                    <i class="fas fa-sign-in-alt"></i> Ingresar
+                </button>
+            </form>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffd700;">
+                <p style="color: #666; font-size: 0.9rem;">
+                    <strong>📋 Credenciales:</strong><br>
+                    👤 <strong>admin@registrocivil.com</strong><br>
+                    🔑 <strong>admin123</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const mensajeDiv = document.getElementById('mensaje-login');
+            
+            mensajeDiv.innerHTML = '<div class="alert-success">⏳ Verificando credenciales...</div>';
+            
+            fetch('/.netlify/functions/admin-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exito) {
+                    mensajeDiv.innerHTML = '<div class="alert-success">✅ Login exitoso. Redirigiendo...</div>';
+                    // Guardar sesión en localStorage
+                    localStorage.setItem('admin_logueado', 'true');
+                    localStorage.setItem('admin_nombre', data.admin.nombre);
+                    localStorage.setItem('admin_email', data.admin.email);
+                    // Redirigir al dashboard después de 1 segundo
+                    setTimeout(() => {
+                        window.location.href = 'admin_dashboard.html';
+                    }, 1000);
+                } else {
+                    mensajeDiv.innerHTML = `<div class="alert-error">❌ ${data.mensaje}</div>`;
+                }
+            })
+            .catch(error => {
+                mensajeDiv.innerHTML = '<div class="alert-error">❌ Error de conexión. Intenta de nuevo.</div>';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
